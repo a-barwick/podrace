@@ -6,9 +6,9 @@
     };
 
     let todos: Todo[] = [
-        { id: "1", content: "Walk the dog", complete: false },
-        { id: "2", content: "Feed the cat", complete: false },
-        { id: "3", content: "Do the dishes", complete: true },
+        // { id: "1", content: "Walk the dog", complete: false },
+        // { id: "2", content: "Feed the cat", complete: false },
+        // { id: "3", content: "Do the dishes", complete: true },
     ];
     let newItem: String;
 
@@ -38,7 +38,7 @@
         <h1
             class="card-header text-4xl font-extrabold leading-none tracking-tight md:text-5xl lg:text-6xl"
         >
-            Todo List
+            Todo List {#if count}({count}){/if}
         </h1>
         <ul class="p-4">
             {#each todos as todo}
@@ -69,9 +69,6 @@
                     >Submit</button
                 >
             </form>
-            {#if count}
-                Number of items: {count}
-            {/if}
         </div>
     </div>
 </div>
