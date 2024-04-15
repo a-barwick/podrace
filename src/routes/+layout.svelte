@@ -8,13 +8,17 @@
         Drawer,
         getDrawerStore,
         Modal,
+        type ModalComponent,
     } from "@skeletonlabs/skeleton";
     import { afterNavigate } from "$app/navigation";
 
     import "../app.pcss";
     import Navigation from "$lib/Navigation/Navigation.svelte";
+    import CreatePlanFormModal from "../lib/modals/CreatePlanFormModal.svelte";
 
+    // Required for Modal and Drawer
     initializeStores();
+
     const drawerStore = getDrawerStore();
     const currentYear = new Date().getFullYear();
 
@@ -29,13 +33,18 @@
     function toggleDrawer(): void {
         drawerStore.open({});
     }
+
+    const modalRegistry: Record<string, ModalComponent> = {
+        // Set a unique modal ID, then pass the component reference
+        CreatePlanFormModal: { ref: CreatePlanFormModal },
+    };
 </script>
 
 <Drawer>
     <Navigation />
 </Drawer>
 
-<!-- <Modal /> -->
+<Modal components={modalRegistry} />
 
 <AppShell slotSidebarLeft="bg-surface-500/5 w-0 md:w-64">
     <!-- Header -->
