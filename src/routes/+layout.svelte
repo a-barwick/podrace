@@ -14,7 +14,8 @@
 
     import "../app.pcss";
     import Navigation from "$lib/Navigation/Navigation.svelte";
-    import CreatePlanFormModal from "../lib/modals/CreatePlanFormModal.svelte";
+    import CreatePlanFormModal from "$lib/modals/CreatePlanFormModal.svelte";
+    import AuthModal from "$lib/modals/AuthModal.svelte";
 
     // Required for Modal and Drawer
     initializeStores();
@@ -37,6 +38,7 @@
     const modalRegistry: Record<string, ModalComponent> = {
         // Set a unique modal ID, then pass the component reference
         CreatePlanFormModal: { ref: CreatePlanFormModal },
+        AuthModal: { ref: AuthModal },
     };
 </script>
 
