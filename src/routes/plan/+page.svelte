@@ -2,6 +2,8 @@
     import { getModalStore, type ModalSettings } from "@skeletonlabs/skeleton";
     import type { Plan } from "$lib/types/global";
 
+    export let data;
+
     const modalStore = getModalStore();
 
     let plans: Plan[] = [];
@@ -12,7 +14,6 @@
         title: "Create Plan",
         body: "Fill out the form below to create a new plan.",
         response: (data: Record<string, string>): void => {
-            console.log(data);
             plans = [
                 ...plans,
                 {
@@ -42,7 +43,7 @@
 </form>
 
 <div class="mt-4 grid grid-flow-col auto-cols-max gap-4">
-    {#each plans as plan}
-        <div class="card p-4">{plan.title}</div>
+    {#each data.plans as plan}
+        <li>{plan.title}</li>
     {/each}
 </div>
