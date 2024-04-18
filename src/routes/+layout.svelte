@@ -11,6 +11,7 @@
         type ModalComponent,
     } from "@skeletonlabs/skeleton";
     import { afterNavigate } from "$app/navigation";
+    import { user } from "$lib/stores";
 
     import "../app.pcss";
     import Navigation from "$lib/Navigation/Navigation.svelte";
@@ -70,6 +71,9 @@
                 </h1>
             </svelte:fragment>
             <svelte:fragment slot="trail">
+                {#if $user}
+                    {$user.email}
+                {/if}
                 <LightSwitch />
             </svelte:fragment>
         </AppBar>

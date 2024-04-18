@@ -1,22 +1,41 @@
 <script lang="ts">
-    import type { SvelteComponent } from "svelte";
+    import { supabase } from "$lib/supabaseClient";
     import { Tab, TabGroup, getModalStore } from "@skeletonlabs/skeleton";
+    import { user } from "$lib/stores";
 
     const modalStore = getModalStore();
 
     let tabSet = 0;
+    let formData = {
+        login: {
+            email: "",
+            password: "",
+        },
+        register: {
+            name: "",
+            email: "",
+            password: "",
+        },
+    };
 
-    function onLoginSubmit(): void {
-        // if ($modalStore[0].response) {
-        //     $modalStore[0].response(formData);
-        // }
+    async function onLoginSubmit(): Promise<void> {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: "example@email.com",
+            password: "example-password",
+        });
+        user.set(data.user);
         modalStore.close();
     }
 
-    function onRegisterSubmit(): void {
-        // if ($modalStore[0].response) {
-        //     $modalStore[0].response(formData);
-        // }
+    async function onRegisterSubmit(): Promise<void> {
+        const { data, error } = await supabase.auth.signUp({
+            email: formData.register.email,
+            password: formData.register.password,
+            options: {
+                emailRedirectTo: "/verify-email",
+            },
+        });
+        user.set(data.user);
         modalStore.close();
     }
 </script>
@@ -39,6 +58,7 @@
                                     id="email"
                                     class="input"
                                     placeholder="Enter your email"
+                                    bind:value={formData.login.email}
                                 />
                             </div>
                             <div class="mb-6">
@@ -50,9 +70,11 @@
                                     id="password"
                                     class="input"
                                     placeholder="Enter your password"
+                                    bind:value={formData.login.password}
                                 />
                             </div>
                             <div class="flex items-center justify-between">
+                                <a href="/forgotpassword"> Forgot Password? </a>
                                 <button
                                     class="btn variant-filled"
                                     type="button"
@@ -60,7 +82,6 @@
                                 >
                                     Sign In
                                 </button>
-                                <a href="/forgotpassword"> Forgot Password? </a>
                             </div>
                         </form>
                     </div>
@@ -76,6 +97,8 @@
                                     id="name"
                                     class="input"
                                     placeholder="Enter your name"
+                                    bind:value={formData.register.name}
+                                    required
                                 />
                             </div>
                             <div class="mb-6">
@@ -87,6 +110,8 @@
                                     id="email"
                                     class="input"
                                     placeholder="Enter your email"
+                                    bind:value={formData.register.email}
+                                    required
                                 />
                             </div>
                             <div class="mb-6">
@@ -98,13 +123,15 @@
                                     id="password"
                                     class="input"
                                     placeholder="Enter your password"
+                                    bind:value={formData.register.password}
+                                    required
                                 />
                             </div>
-                            <div class="flex items-center justify-between">
+                            <div class="flex justify-end">
                                 <button
                                     class="btn variant-filled"
-                                    type="button"
-                                    on:click={onRegisterSubmit}
+                                    type="submit"
+                                    on:click|preventDefault={onRegisterSubmit}
                                 >
                                     Sign In
                                 </button>
