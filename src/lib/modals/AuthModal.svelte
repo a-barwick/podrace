@@ -2,6 +2,7 @@
     import { supabase } from "$lib/supabaseClient";
     import { Tab, TabGroup, getModalStore } from "@skeletonlabs/skeleton";
     import { session, user } from "$lib/stores";
+    import { constants } from "$constants";
 
     const modalStore = getModalStore();
 
@@ -29,9 +30,12 @@
             loginError = error.message;
             return;
         }
-        localStorage.setItem("supabase.auth.token", data.session.access_token);
         localStorage.setItem(
-            "supabase.auth.refreshToken",
+            constants.auth.SUPABASE_STORAGE_KEY_AUTH_TOKEN,
+            data.session.access_token,
+        );
+        localStorage.setItem(
+            constants.auth.SUPABASE_STORAGE_KEY_REFRESH_TOKEN,
             data.session.refresh_token,
         );
         user.set(data.user);
@@ -53,7 +57,8 @@
 </script>
 
 <svelte:head>
-    <script src="https://accounts.google.com/gsi/client" async></script>
+    <!-- Uncomment to load Google GIS script -->
+    <!-- <script src="https://accounts.google.com/gsi/client" async></script> -->
 </svelte:head>
 
 {#if $modalStore[0]}
@@ -108,7 +113,8 @@
                                 </button>
                             </div>
                         </form>
-                        <div class="my-4">
+                        <!-- Google GIS Button -->
+                        <!-- <div class="my-4">
                             <div
                                 id="g_id_onload"
                                 data-client_id="448648448961-apca176uiir5nu554t4m33if8k5chqck.apps.googleusercontent.com"
@@ -129,7 +135,7 @@
                                 data-size="large"
                                 data-logo_alignment="left"
                             ></div>
-                        </div>
+                        </div> -->
                     </div>
                 {:else if tabSet === 1}
                     <div class="card p-4">
@@ -183,7 +189,8 @@
                                 </button>
                             </div>
                         </form>
-                        <div class="my-4">
+                        <!-- Google GIS Button -->
+                        <!-- <div class="my-4">
                             <div
                                 id="g_id_onload"
                                 data-client_id="448648448961-apca176uiir5nu554t4m33if8k5chqck.apps.googleusercontent.com"
@@ -203,7 +210,7 @@
                                 data-size="large"
                                 data-logo_alignment="left"
                             ></div>
-                        </div>
+                        </div> -->
                     </div>
                 {/if}
             </svelte:fragment>
