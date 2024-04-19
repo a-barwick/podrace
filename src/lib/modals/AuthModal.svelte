@@ -1,7 +1,7 @@
 <script lang="ts">
     import { supabase } from "$lib/supabaseClient";
     import { Tab, TabGroup, getModalStore } from "@skeletonlabs/skeleton";
-    import { user } from "$lib/stores";
+    import { session, user } from "$lib/stores";
 
     const modalStore = getModalStore();
 
@@ -17,13 +17,25 @@
             password: "",
         },
     };
+    let loginError = "";
 
     async function onLoginSubmit(): Promise<void> {
+        loginError = "";
         const { data, error } = await supabase.auth.signInWithPassword({
-            email: "example@email.com",
-            password: "example-password",
+            email: formData.login.email,
+            password: formData.login.password,
         });
+        if (error) {
+            loginError = error.message;
+            return;
+        }
+        localStorage.setItem("supabase.auth.token", data.session.access_token);
+        localStorage.setItem(
+            "supabase.auth.refreshToken",
+            data.session.refresh_token,
+        );
         user.set(data.user);
+        session.set(data.session);
         modalStore.close();
     }
 
@@ -40,6 +52,10 @@
     }
 </script>
 
+<svelte:head>
+    <script src="https://accounts.google.com/gsi/client" async></script>
+</svelte:head>
+
 {#if $modalStore[0]}
     <div class="modal-example-form card p-4 w-modal shadow-xl space-y-4">
         <TabGroup justify="justify-center">
@@ -48,7 +64,15 @@
             <svelte:fragment slot="panel">
                 {#if tabSet === 0}
                     <div class="card p-4">
-                        <form class="mt-4">
+                        {#if loginError}
+                            <aside class="alert variant-ghost">
+                                <div class="alert-message">
+                                    <h3 class="h3">Error logging in</h3>
+                                    <p>{loginError}</p>
+                                </div>
+                            </aside>
+                        {/if}
+                        <form class="my-4">
                             <div class="mb-6">
                                 <label for="email" class="label mb-2"
                                     >Email</label
@@ -84,6 +108,28 @@
                                 </button>
                             </div>
                         </form>
+                        <div class="my-4">
+                            <div
+                                id="g_id_onload"
+                                data-client_id="448648448961-apca176uiir5nu554t4m33if8k5chqck.apps.googleusercontent.com"
+                                data-context="signin"
+                                data-ux_mode="popup"
+                                data-callback="handleSignInWithGoogle"
+                                data-nonce=""
+                                data-auto_select="true"
+                                data-itp_support="true"
+                            ></div>
+
+                            <div
+                                class="g_id_signin"
+                                data-type="standard"
+                                data-shape="pill"
+                                data-theme="outline"
+                                data-text="signin_with"
+                                data-size="large"
+                                data-logo_alignment="left"
+                            ></div>
+                        </div>
                     </div>
                 {:else if tabSet === 1}
                     <div class="card p-4">
@@ -137,6 +183,27 @@
                                 </button>
                             </div>
                         </form>
+                        <div class="my-4">
+                            <div
+                                id="g_id_onload"
+                                data-client_id="448648448961-apca176uiir5nu554t4m33if8k5chqck.apps.googleusercontent.com"
+                                data-context="signin"
+                                data-ux_mode="popup"
+                                data-callback="handleSignInWithGoogle"
+                                data-auto_select="true"
+                                data-itp_support="true"
+                            ></div>
+
+                            <div
+                                class="g_id_signin"
+                                data-type="standard"
+                                data-shape="rectangular"
+                                data-theme="outline"
+                                data-text="signin_with"
+                                data-size="large"
+                                data-logo_alignment="left"
+                            ></div>
+                        </div>
                     </div>
                 {/if}
             </svelte:fragment>
