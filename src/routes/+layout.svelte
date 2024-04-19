@@ -1,5 +1,7 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import type { AfterNavigate } from "@sveltejs/kit";
+    import { afterNavigate } from "$app/navigation";
     import {
         AppBar,
         AppShell,
@@ -10,18 +12,50 @@
         Modal,
         type ModalComponent,
     } from "@skeletonlabs/skeleton";
-    import { afterNavigate } from "$app/navigation";
+
+    import { user, session } from "$lib/stores";
+    import { supabase } from "$lib/supabaseClient";
+    import { constants } from "$constants";
+
+    import Navigation from "$lib/Navigation/Navigation.svelte";
+    import CreatePlanFormModal from "$lib/modals/CreatePlanFormModal.svelte";
+    import AuthModal from "$lib/modals/AuthModal.svelte";
 
     import "../app.pcss";
-    import Navigation from "$lib/Navigation/Navigation.svelte";
-    import CreatePlanFormModal from "../lib/modals/CreatePlanFormModal.svelte";
 
-    // Required for Modal and Drawer
+    // Required for Modal and Drawer components
     initializeStores();
 
     const drawerStore = getDrawerStore();
-    const currentYear = new Date().getFullYear();
 
+    /**
+     * Sets the session if the user is already logged in
+     */
+    onMount(async () => {
+        const accessToken = localStorage.getItem(
+            constants.auth.SUPABASE_STORAGE_KEY_AUTH_TOKEN,
+        );
+        const refreshToken = localStorage.getItem(
+            constants.auth.SUPABASE_STORAGE_KEY_REFRESH_TOKEN,
+        );
+
+        if (accessToken && refreshToken) {
+            const { data, error } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken,
+            });
+            if (error) {
+                console.error(error);
+                return;
+            }
+            user.set(data.user);
+            session.set(data.session);
+        }
+    });
+
+    /**
+     * Resets the scroll position when navigating to a new page
+     */
     afterNavigate((params: AfterNavigate) => {
         const isNewPage = params.from?.url.pathname !== params.to?.url.pathname;
         const elemPage = document.querySelector("#page");
@@ -30,13 +64,19 @@
         }
     });
 
+    /**
+     * Toggles the drawer
+     */
     function toggleDrawer(): void {
         drawerStore.open({});
     }
 
+    /**
+     * Registers variations of modals
+     */
     const modalRegistry: Record<string, ModalComponent> = {
-        // Set a unique modal ID, then pass the component reference
         CreatePlanFormModal: { ref: CreatePlanFormModal },
+        AuthModal: { ref: AuthModal },
     };
 </script>
 
@@ -68,6 +108,9 @@
                 </h1>
             </svelte:fragment>
             <svelte:fragment slot="trail">
+                {#if $user}
+                    <p class="mr-4">{$user.email}</p>
+                {/if}
                 <LightSwitch />
             </svelte:fragment>
         </AppBar>
@@ -84,9 +127,9 @@
     </main>
 
     <!-- Footer -->
-    <svelte:fragment slot="pageFooter">
+    <!-- <svelte:fragment slot="pageFooter">
         <footer class="text-center py-4">
-            &copy; {currentYear} Podracer. All rights reserved.
+            &copy; {new Date().getFullYear()} Podracer. All rights reserved.
         </footer>
-    </svelte:fragment>
+    </svelte:fragment> -->
 </AppShell>

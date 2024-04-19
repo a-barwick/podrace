@@ -1,9 +1,12 @@
 <script lang="ts">
     import { getModalStore, type ModalSettings } from "@skeletonlabs/skeleton";
     import type { Plan } from "$lib/types/global";
+    import { user } from "$lib/stores";
+    import { supabase } from "$lib/supabaseClient";
+    import { onMount } from "svelte";
 
+    export let data;
     const modalStore = getModalStore();
-
     let plans: Plan[] = [];
 
     const modal: ModalSettings = {
@@ -12,37 +15,59 @@
         title: "Create Plan",
         body: "Fill out the form below to create a new plan.",
         response: (data: Record<string, string>): void => {
-            console.log(data);
-            plans = [
-                ...plans,
-                {
-                    id: "",
-                    title: data.title,
-                    description: null,
-                    podcastId: null,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                } as Plan,
-            ];
+            insertPlan(data.title);
         },
     };
+
+    onMount(async () => {
+        await refreshPlans();
+    });
 
     const openCreatePlanModal = (): void => {
         modalStore.trigger(modal);
     };
+
+    const insertPlan = async (title: string): Promise<void> => {
+        if (!title) {
+            console.error("Title is missing.");
+            return;
+        }
+        if (!$user) {
+            console.error("User is missing.");
+            return;
+        }
+        const { error } = await supabase
+            .from("plans")
+            .insert([{ title, user_id: $user.id } as Plan]);
+        if (error) {
+            console.error(error);
+            return;
+        }
+        plans = [...plans, { title }];
+    };
+
+    const refreshPlans = async (): Promise<void> => {
+        const { data, error } = await supabase.from("plans").select();
+        const rows = data as Plan[];
+        if (error) {
+            console.error(error);
+            return;
+        }
+        console.log("SELECT * FROM plans", rows);
+        plans = rows;
+    };
 </script>
 
 <form class="">
-    <button
-        class="bg-blue-500 text-white px-4 py-2 rounded"
-        on:click={openCreatePlanModal}
-    >
+    <button class="btn variant-filled" on:click={openCreatePlanModal}>
         Create Plan
     </button>
 </form>
 
 <div class="mt-4 grid grid-flow-col auto-cols-max gap-4">
-    {#each plans as plan}
-        <div class="card p-4">{plan.title}</div>
-    {/each}
+    <ul>
+        {#each plans as plan}
+            <li>{plan.title}</li>
+        {/each}
+    </ul>
 </div>

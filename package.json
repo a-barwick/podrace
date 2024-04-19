@@ -38,6 +38,8 @@
     },
     "type": "module",
     "dependencies": {
-        "@sentry/sveltekit": "^7.110.0"
+        "@sentry/sveltekit": "^7.110.0",
+        "@supabase/supabase-js": "^2.42.4",
+        "dotenv": "^16.4.5"
     }
 }

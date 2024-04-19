@@ -18,12 +18,12 @@ export type Podcast = {
 };
 
 export type Plan = {
-    id: string;
+    id?: string | null;
     title: string;
-    podcastId: string | null;
-    description: string | null;
-    createdAt: string | null;
-    updatedAt: string | null;
+    podcastId?: string | null;
+    description?: string | null;
+    createdAt?: string | null;
+    updatedAt?: string | null;
 };
 
 export type PlanList = {
