@@ -109,7 +109,7 @@
             </svelte:fragment>
             <svelte:fragment slot="trail">
                 {#if $user}
-                    {$user.email}
+                    <p class="mr-4">{$user.email}</p>
                 {/if}
                 <LightSwitch />
             </svelte:fragment>
@@ -127,9 +127,9 @@
     </main>
 
     <!-- Footer -->
-    <svelte:fragment slot="pageFooter">
+    <!-- <svelte:fragment slot="pageFooter">
         <footer class="text-center py-4">
             &copy; {new Date().getFullYear()} Podracer. All rights reserved.
         </footer>
-    </svelte:fragment>
+    </svelte:fragment> -->
 </AppShell>
