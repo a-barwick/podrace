@@ -4,6 +4,7 @@
         getModalStore,
         type ModalSettings,
     } from "@skeletonlabs/skeleton";
+    import { user } from "$lib/stores";
 
     const modalStore = getModalStore();
     const drawerStore = getDrawerStore();
@@ -38,11 +39,13 @@
         <li>
             <a href="/publish" on:click={closeDrawer}>🎉 Publish</a>
         </li>
-        <li>
-            <!-- svelte-ignore a11y-invalid-attribute -->
-            <a href="#" on:click|preventDefault={openAuthModal}
-                >🔓 Login/Register</a
-            >
-        </li>
+        {#if !$user}
+            <li>
+                <!-- svelte-ignore a11y-invalid-attribute -->
+                <a href="#" on:click|preventDefault={openAuthModal}
+                    >🔓 Login/Register</a
+                >
+            </li>
+        {/if}
     </ul>
 </nav>
