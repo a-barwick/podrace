@@ -11,6 +11,8 @@
         getDrawerStore,
         Modal,
         type ModalComponent,
+        type ModalSettings,
+        getModalStore,
     } from "@skeletonlabs/skeleton";
 
     import { user, session } from "$lib/stores";
@@ -26,7 +28,27 @@
     // Required for Modal and Drawer components
     initializeStores();
 
+    /**
+     * Skeleton UI stores
+     */
     const drawerStore = getDrawerStore();
+    const modalStore = getModalStore();
+
+    /**
+     * Modal settings
+     */
+    const modal: ModalSettings = {
+        type: "component",
+        component: "AuthModal",
+    };
+
+    /**
+     * Registers variations of modals
+     */
+    const modalRegistry: Record<string, ModalComponent> = {
+        CreatePlanFormModal: { ref: CreatePlanFormModal },
+        AuthModal: { ref: AuthModal },
+    };
 
     /**
      * Sets the session if the user is already logged in
@@ -72,12 +94,11 @@
     }
 
     /**
-     * Registers variations of modals
+     * Opens the auth modal
      */
-    const modalRegistry: Record<string, ModalComponent> = {
-        CreatePlanFormModal: { ref: CreatePlanFormModal },
-        AuthModal: { ref: AuthModal },
-    };
+    function openAuthModal(): void {
+        modalStore.trigger(modal);
+    }
 </script>
 
 <Drawer>
@@ -110,6 +131,10 @@
             <svelte:fragment slot="trail">
                 {#if $user}
                     <p class="mr-4">{$user.email}</p>
+                {:else}
+                    <a href="#" on:click|preventDefault={openAuthModal}>
+                        Login/Register
+                    </a>
                 {/if}
                 <LightSwitch />
             </svelte:fragment>

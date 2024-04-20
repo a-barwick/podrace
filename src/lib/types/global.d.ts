@@ -20,10 +20,7 @@ export type Podcast = {
 export type Plan = {
     id?: string | null;
     title: string;
-    podcastId?: string | null;
-    description?: string | null;
-    createdAt?: string | null;
-    updatedAt?: string | null;
+    user_id: string;
 };
 
 export type PlanList = {

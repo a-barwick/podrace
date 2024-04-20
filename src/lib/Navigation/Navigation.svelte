@@ -1,27 +1,11 @@
 <script lang="ts">
-    import {
-        getDrawerStore,
-        getModalStore,
-        type ModalSettings,
-    } from "@skeletonlabs/skeleton";
-    import { user } from "$lib/stores";
+    import { getDrawerStore } from "@skeletonlabs/skeleton";
 
-    const modalStore = getModalStore();
     const drawerStore = getDrawerStore();
-
-    const modal: ModalSettings = {
-        type: "component",
-        component: "AuthModal",
-    };
 
     function closeDrawer(): void {
         drawerStore.close();
     }
-
-    const openAuthModal = (): void => {
-        modalStore.trigger(modal);
-        closeDrawer();
-    };
 </script>
 
 <nav class="list-nav p-4">
@@ -39,13 +23,5 @@
         <li>
             <a href="/publish" on:click={closeDrawer}>🎉 Publish</a>
         </li>
-        {#if !$user}
-            <li>
-                <!-- svelte-ignore a11y-invalid-attribute -->
-                <a href="#" on:click|preventDefault={openAuthModal}
-                    >🔓 Login/Register</a
-                >
-            </li>
-        {/if}
     </ul>
 </nav>
