@@ -4,8 +4,10 @@
     import { user } from "$lib/stores";
     import { supabase } from "$lib/supabaseClient";
     import { onMount } from "svelte";
+    import type { PageData } from "../$types";
 
     const modalStore = getModalStore();
+    export let data: PageData;
     let plans: Plan[] = [];
 
     const modal: ModalSettings = {
@@ -19,7 +21,10 @@
     };
 
     onMount(async () => {
-        await refreshPlans();
+        if (data) {
+            console.log("loaded data", data);
+            // plans = data.plans;
+        }
     });
 
     const openCreatePlanModal = (): void => {

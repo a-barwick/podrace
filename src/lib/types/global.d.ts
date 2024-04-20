@@ -19,26 +19,14 @@ export type Podcast = {
 
 export type Plan = {
     id?: string | null;
-    title: string;
     user_id: string;
-};
-
-export type PlanList = {
-    id: string;
-    podcastId: string;
     title: string;
-    description: string;
-    createdAt: string;
-    updatedAt: string;
-    createdBy: string;
 };
 
-export type PlanListItem = {
-    id: string;
-    planId: string;
+export type PlanItem = {
+    id?: string | null;
+    plan_id: string;
+    user_id: string;
     content: string;
-    checked: boolean;
-    createdAt: string;
-    updatedAt: string;
-    createdBy: string;
+    is_done: boolean = false;
 };

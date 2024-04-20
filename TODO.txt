@@ -1,0 +1,6 @@
+Plan feature:
+- Create better list view for main plan page
+- Finish individual plan page  
+- problems:
+    - server side load not working, session only exists in the client
+
