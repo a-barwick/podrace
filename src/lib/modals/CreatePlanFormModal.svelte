@@ -1,6 +1,10 @@
 <script lang="ts">
     import type { SvelteComponent } from "svelte";
     import { getModalStore } from "@skeletonlabs/skeleton";
+    import { user } from "$lib/stores";
+    import { supabase } from "$lib/supabaseClient";
+    import type { Plan } from "$lib/types/global";
+    import Form from "$lib/components/PlanItemForm/PlanItemForm.svelte";
 
     export let parent: SvelteComponent;
 
@@ -8,13 +12,25 @@
 
     const formData = {
         title: "My Plan",
+        items: ["Walk the dog", "Buy groceries", "Clean the house"] as string[],
     };
 
-    function onFormSubmit(): void {
-        if ($modalStore[0].response) {
-            $modalStore[0].response(formData);
+    async function createPlanWithItems() {
+        if (!formData.title) {
+            console.error("Title is missing.");
+            return;
         }
-        modalStore.close();
+        if (!$user) {
+            console.error("User is missing.");
+            return;
+        }
+        const { error } = await supabase
+            .from("plans")
+            .insert([{ title: formData.title, user_id: $user.id } as Plan]);
+        if (error) {
+            console.error(error);
+            return;
+        }
     }
 </script>
 
@@ -28,7 +44,7 @@
             class="modal-form border border-surface-500 p-4 space-y-4 rounded-container-token"
         >
             <label class="label">
-                <span>Name</span>
+                <span>Plan Name</span>
                 <input
                     class="input"
                     type="text"
@@ -37,10 +53,11 @@
                 />
             </label>
         </form>
+        <Form />
         <!-- prettier-ignore -->
         <footer class="modal-footer {parent.regionFooter}">
 			<button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
-			<button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>Submit Form</button>
+			<button class="btn {parent.buttonPositive}" on:click={createPlanWithItems}>Create</button>
 		</footer>
     </div>
 {/if}
