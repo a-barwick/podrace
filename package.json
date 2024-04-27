@@ -5,6 +5,7 @@
     "private": true,
     "scripts": {
         "dev": "vite dev",
+        "prepack": "svelte-kit sync",
         "prepare": "svelte-kit sync",
         "build": "vite build",
         "preview": "vite preview",
